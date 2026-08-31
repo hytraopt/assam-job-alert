@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Assam Job Alert</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f0f2f5; margin: 0; padding: 0; }
+    header { background: #003366; color: white; text-align: center; padding: 15px; }
+    .container { max-width: 700px; margin: 20px auto; padding: 0 10px; }
+    .job-card { background: white; padding: 15px; margin-bottom: 15px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .apply-btn { display: inline-block; background: #28a745; color: white; padding: 8px 15px; text-decoration: none; border-radius: 4px; font-weight: bold; margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Assam Job Alert</h1>
+  </header>
+  <div class="container" id="job-container">
+    <p>Loading jobs...</p>
+  </div>
+
+  <script>
+    // Iss string ki jagah apna Google Web App URL paste karein
+    const API_URL = "https://script.google.com/macros/s/AKfycbyZnkUKP0lJ5cCN4B968GmvHHigAfMjuxJwGQH1WPqFgCBpYZpfLwWVyiiMuAY0DdoC-g/exec";
+
+    fetch(API_URL)
+      .then(res => res.json())
+      .then(data => {
+        const container = document.getElementById("job-container");
+        container.innerHTML = "";
+        if(data.length === 0) {
+          container.innerHTML = "<p>No job alerts available right now.</p>";
+          return;
+        }
+        data.reverse().forEach(job => {
+          const card = document.createElement("div");
+          card.className = "job-card";
+          card.innerHTML = `
+            <h2>${job["Job Title"]}</h2>
+            <p><strong>Date:</strong> ${job["Date"]}</p>
+            <p><strong>About:</strong> ${job["About Job"]}</p>
+            <p><strong>Requirements:</strong> ${job["Requirements"]}</p>
+            <p><strong>Last Date:</strong> ${job["Last Date"]}</p>
+            <a href="${job["Apply Link"]}" target="_blank" class="apply-btn">Apply Now</a>
+          `;
+          container.appendChild(card);
+        });
+      });
+  </script>
+</body>
+</html>
