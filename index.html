@@ -3,46 +3,64 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Assam Job Alert</title>
+  <title>Assam Job Alert - Latest Job Notifications</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    body { font-family: Arial, sans-serif; background: #f0f2f5; margin: 0; padding: 0; }
-    header { background: #003366; color: white; text-align: center; padding: 15px; }
-    .container { max-width: 700px; margin: 20px auto; padding: 0 10px; }
-    .job-card { background: white; padding: 15px; margin-bottom: 15px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-    .apply-btn { display: inline-block; background: #28a745; color: white; padding: 8px 15px; text-decoration: none; border-radius: 4px; font-weight: bold; margin-top: 10px; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+    body { background-color: #f4f7fe; color: #2b3674; padding-bottom: 40px; }
+    header { background: linear-gradient(135deg, #0b2545 0%, #134074 100%); color: white; padding: 30px 20px; text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+    header h1 { font-size: 26px; font-weight: 700; margin-bottom: 6px; }
+    header p { font-size: 14px; opacity: 0.8; }
+    .container { max-width: 800px; margin: 25px auto; padding: 0 15px; }
+    .job-card { background: white; border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(112, 144, 176, 0.1); border: 1px solid #e9edf7; transition: transform 0.2s ease; }
+    .job-card:hover { transform: translateY(-3px); }
+    .job-title { font-size: 18px; font-weight: 700; color: #1b2559; margin-bottom: 10px; }
+    .badge-container { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
+    .badge { background: #e9f3ff; color: #0066ff; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+    .badge.last-date { background: #ffeef0; color: #ee5d50; }
+    .section-title { font-size: 13px; font-weight: 600; text-transform: uppercase; color: #a3edd9; color: #8f9bba; margin-top: 10px; }
+    .section-desc { font-size: 14px; color: #475467; margin-top: 4px; line-height: 1.5; white-space: pre-line; }
+    .apply-btn { display: block; width: 100%; text-align: center; background: #0066ff; color: white; text-decoration: none; padding: 12px; border-radius: 8px; font-weight: 600; margin-top: 15px; transition: background 0.2s; }
+    .apply-btn:hover { background: #0052cc; }
+    .loading { text-align: center; font-weight: 600; color: #8f9bba; padding: 40px; }
   </style>
 </head>
 <body>
   <header>
     <h1>Assam Job Alert</h1>
+    <p>Find Latest Government & Private Jobs in Assam</p>
   </header>
+
   <div class="container" id="job-container">
-    <p>Loading jobs...</p>
+    <div class="loading">Loading Job Alerts...</div>
   </div>
 
   <script>
-    // Iss string ki jagah apna Google Web App URL paste karein
-    const API_URL = "https://script.google.com/macros/s/AKfycbyZnkUKP0lJ5cCN4B968GmvHHigAfMjuxJwGQH1WPqFgCBpYZpfLwWVyiiMuAY0DdoC-g/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbyZnkUKP0lJ5cCN4B968GmvHHigAfMjuxJwGQH1WPqFgCBpYZpfLwWVyiiMuAY0DdoC-g/exec"; // Web App URL Replace Karein
 
     fetch(API_URL)
       .then(res => res.json())
       .then(data => {
         const container = document.getElementById("job-container");
         container.innerHTML = "";
-        if(data.length === 0) {
-          container.innerHTML = "<p>No job alerts available right now.</p>";
+        if(!data || data.length === 0) {
+          container.innerHTML = "<div class='loading'>No active job posts found.</div>";
           return;
         }
         data.reverse().forEach(job => {
           const card = document.createElement("div");
           card.className = "job-card";
           card.innerHTML = `
-            <h2>${job["Job Title"]}</h2>
-            <p><strong>Date:</strong> ${job["Date"]}</p>
-            <p><strong>About:</strong> ${job["About Job"]}</p>
-            <p><strong>Requirements:</strong> ${job["Requirements"]}</p>
-            <p><strong>Last Date:</strong> ${job["Last Date"]}</p>
-            <a href="${job["Apply Link"]}" target="_blank" class="apply-btn">Apply Now</a>
+            <div class="job-title">${job["Job Title"]}</div>
+            <div class="badge-container">
+              <span class="badge">Posted: ${job["Date"]}</span>
+              <span class="badge last-date">Last Date: ${job["Last Date"]}</span>
+            </div>
+            <div class="section-title">About Job</div>
+            <div class="section-desc">${job["About Job"]}</div>
+            <div class="section-title">Requirements</div>
+            <div class="section-desc">${job["Requirements"]}</div>
+            <a href="${job["Apply Link"]}" target="_blank" class="apply-btn">Apply Online</a>
           `;
           container.appendChild(card);
         });
