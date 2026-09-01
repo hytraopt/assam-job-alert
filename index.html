@@ -7,7 +7,7 @@
   <!-- Google Search Console Verification Tag -->
   <meta name="google-site-verification" content="66lhUdCYjoP1lnlSzEEkBKabE7uw1MQ_SoN1mZWK7-I" />
 
-  <!-- Favicon / Google Search Logo Tags (Updated with New Logo) -->
+  <!-- Favicon / Google Search Logo Tags -->
   <link rel="icon" type="image/jpeg" href="IMG_20260901_201103_160.jpg">
   <link rel="apple-touch-icon" href="IMG_20260901_201103_160.jpg">
 
@@ -22,7 +22,6 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
     body { background-color: #f4f7fe; color: #2b3674; padding-bottom: 20px; min-height: 100vh; display: flex; flex-direction: column; }
     
-    /* Header & Logo Styles */
     header { background: linear-gradient(135deg, #0b2545 0%, #134074 100%); color: white; padding: 25px 20px; text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
     .header-content { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; }
     .site-logo { width: 75px; height: 75px; object-fit: cover; border-radius: 50%; border: 2px solid #ffffff; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
@@ -51,11 +50,15 @@
     .action-btn { display: block; width: 100%; text-align: center; background: #0066ff; color: white; text-decoration: none; padding: 12px; border-radius: 8px; font-weight: 600; margin-top: 15px; cursor: pointer; border: none; transition: background 0.2s; }
     .action-btn:hover { background: #0052cc; }
     .action-btn.disabled { background: #9ca3af; pointer-events: none; }
+    
+    /* Share Button Style */
+    .share-btn { background: #25D366; margin-top: 10px; }
+    .share-btn:hover { background: #1eb857; }
+    
     .back-btn { background: #64748b; margin-bottom: 15px; width: auto; display: inline-block; padding: 8px 16px; font-size: 13px; }
 
     .loading { text-align: center; font-weight: 600; color: #8f9bba; padding: 40px; }
 
-    /* Footer & Modal Styles */
     footer { background: #0b2545; color: white; padding: 20px; text-align: center; margin-top: 40px; font-size: 13px; }
     footer a { color: #a3cfff; text-decoration: none; margin: 0 10px; font-weight: 500; cursor: pointer; }
     footer a:hover { text-decoration: underline; }
@@ -80,7 +83,6 @@
 <body>
   <header>
     <div class="header-content">
-      <!-- Updated Header Logo -->
       <img src="IMG_20260901_201103_160.jpg" alt="Assam Job Alert Logo" class="site-logo" onerror="this.style.display='none'">
       <div>
         <h1>Assam Job Alert</h1>
@@ -176,10 +178,13 @@
       const job = allJobsData[actualIndex];
       const expired = isJobExpired(job["Last Date"]);
       const showNewTag = isNewPost(job["Date"]);
+      
+      const jobID = job["ID"] || actualIndex;
+      window.history.pushState(null, '', `?job=${jobID}`);
 
       const container = document.getElementById("main-container");
       container.innerHTML = `
-        <button onclick="renderJobListView()" class="action-btn back-btn">← Back to All Jobs</button>
+        <button onclick="goBackToList()" class="action-btn back-btn">← Back to All Jobs</button>
         <div class="job-card">
           ${showNewTag ? '<div class="corner-new-tag">NEW</div>' : ''}
           <div class="job-title">${job["Job Title"]}</div>
@@ -201,62 +206,58 @@
             ? '<button class="action-btn disabled">Applications Closed</button>' 
             : `<a href="${job["Apply Link"]}" target="_blank" class="action-btn">Apply Online Now</a>`
           }
+          
+          <button onclick="shareJobPost('${job["Job Title"].replace(/'/g, "\\'")}', '${jobID}')" class="action-btn share-btn">📲 Share Job Post</button>
         </div>
       `;
       window.scrollTo(0,0);
     }
 
-    function openPage(pageType) {
-      const modal = document.getElementById("page-modal");
-      const modalContent = document.getElementById("modal-body-content");
-      
-      if(pageType === 'about') {
-        modalContent.innerHTML = `
-          <h2>About Us</h2>
-          <p>Welcome to <strong>Assam Job Alert</strong>, your primary destination for real-time notifications on official recruitment notices across Assam.</p>
-          <p>Our mission is to simplify job hunting for aspirants across Assam by providing clear, organized, and timely recruitment details for both Government and Private sector openings.</p>
-          <p>We aggregate job data from official departmental notifications to help you stay updated on upcoming recruitment dates, eligibility requirements, and application procedures.</p>
-        `;
-      } else if(pageType === 'contact') {
-        modalContent.innerHTML = `
-          <h2>Contact Us</h2>
-          <p>Feel free to reach out to us for job postings, queries, or user support.</p>
-          
-          <div class="contact-box">
-            <strong>📢 Job Posting / Business Inquiry:</strong>
-            <p style="margin-bottom:4px;">Want to publish a job vacancy on our portal? Contact us at:</p>
-            <a href="mailto:contactassamjobalert@gmail.com">contactassamjobalert@gmail.com</a>
-          </div>
-
-          <div class="contact-box">
-            <strong>❓ Help & General Support:</strong>
-            <p style="margin-bottom:4px;">For any portal-related queries or feedback, email us at:</p>
-            <a href="mailto:supportassamjobalert@gmail.com">supportassamjobalert@gmail.com</a>
-          </div>
-
-          <p style="margin-top:10px;"><strong>Location:</strong> Guwahati, Assam, India</p>
-        `;
-      } else if(pageType === 'privacy') {
-        modalContent.innerHTML = `
-          <h2>Privacy Policy</h2>
-          <p>At <strong>Assam Job Alert</strong>, accessible from our site, the privacy of our visitors is one of our top priorities.</p>
-          <p><strong>Log Files:</strong> Assam Job Alert follows a standard procedure of using log files. These files log visitors when they visit websites. The information collected includes IP addresses, browser types, ISP, date and time stamps, and referring pages.</p>
-          <p><strong>Google DoubleClick DART Cookie:</strong> Google is one of a third-party vendor on our site. It also uses cookies, known as DART cookies, to serve ads to our site visitors based upon their visit to our site and other sites on the internet.</p>
-          <p><strong>Third Party Advertisers:</strong> We may use third-party advertising companies (such as Google AdSense) to serve ads when you visit our website. These companies may use aggregated information about your visits to provide advertisements about goods and services of interest to you.</p>
-        `;
-      }
-      modal.style.display = "flex";
+    function goBackToList() {
+      window.history.pushState(null, '', window.location.pathname);
+      renderJobListView();
     }
 
-    function closeModal() {
-      document.getElementById("page-modal").style.display = "none";
+    function shareJobPost(title, jobID) {
+      const shareUrl = `${window.location.origin}${window.location.pathname}?job=${jobID}`;
+      const shareText = `Check out this job alert: ${title}\n\nApply link: `;
+      
+      if (navigator.share) {
+        navigator.share({
+          title: title,
+          text: shareText,
+          url: shareUrl
+        }).catch(err => console.log('Share canceled'));
+      } else {
+        navigator.clipboard.writeText(`${shareText}${shareUrl}`);
+        alert('Job link copied to clipboard!');
+      }
+    }
+
+    function checkURLForJobParam() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const jobParam = urlParams.get('job');
+      
+      if (jobParam !== null && allJobsData.length > 0) {
+        const reversedJobs = allJobsData.slice().reverse();
+        const foundIndex = reversedJobs.findIndex((job, i) => {
+          const actualIndex = allJobsData.length - 1 - i;
+          return job["ID"] == jobParam || actualIndex == jobParam;
+        });
+        
+        if (foundIndex !== -1) {
+          openJobDetails(foundIndex);
+          return;
+        }
+      }
+      renderJobListView();
     }
 
     fetch(API_URL)
       .then(res => res.json())
       .then(data => {
         allJobsData = data;
-        renderJobListView();
+        checkURLForJobParam();
       });
   </script>
 </body>
