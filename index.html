@@ -8,9 +8,14 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
     body { background-color: #f4f7fe; color: #2b3674; padding-bottom: 20px; min-height: 100vh; display: flex; flex-direction: column; }
+    
+    /* Header & Logo Styles */
     header { background: linear-gradient(135deg, #0b2545 0%, #134074 100%); color: white; padding: 25px 20px; text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
-    header h1 { font-size: 24px; font-weight: 700; margin-bottom: 6px; }
+    .header-content { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; }
+    .site-logo { width: 75px; height: 75px; object-fit: cover; border-radius: 50%; border: 2px solid #ffffff; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+    header h1 { font-size: 24px; font-weight: 700; margin-bottom: 2px; }
     header p { font-size: 13px; opacity: 0.8; }
+    
     .container { max-width: 800px; margin: 20px auto; padding: 0 15px; flex: 1; }
     
     .job-card { background: white; border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(112, 144, 176, 0.1); border: 1px solid #e9edf7; position: relative; overflow: hidden; }
@@ -48,7 +53,6 @@
     .modal-body h2 { color: #1b2559; margin-bottom: 12px; font-size: 20px; }
     .modal-body p { font-size: 14px; color: #475467; line-height: 1.6; margin-bottom: 12px; }
     
-    /* Responsive Contact Boxes */
     .contact-box { background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px 15px; border-radius: 8px; margin-bottom: 12px; word-break: break-word; overflow-wrap: anywhere; }
     .contact-box strong { color: #1b2559; display: block; margin-bottom: 4px; }
     .contact-box a { color: #0066ff; font-weight: 600; text-decoration: none; word-break: break-all; }
@@ -62,8 +66,14 @@
 </head>
 <body>
   <header>
-    <h1>Assam Job Alert</h1>
-    <p>Find Latest Government & Private Jobs in Assam</p>
+    <div class="header-content">
+      <!-- Directly linked to uploaded image file -->
+      <img src="IMG_20260901_193910_352.jpg" alt="Assam Job Alert Logo" class="site-logo" onerror="this.style.display='none'">
+      <div>
+        <h1>Assam Job Alert</h1>
+        <p>Find Latest Government & Private Jobs in Assam</p>
+      </div>
+    </div>
   </header>
 
   <div class="container" id="main-container">
