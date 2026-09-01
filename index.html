@@ -59,6 +59,7 @@
 
     .loading { text-align: center; font-weight: 600; color: #8f9bba; padding: 40px; }
 
+    /* Footer & Modal Styles */
     footer { background: #0b2545; color: white; padding: 20px; text-align: center; margin-top: 40px; font-size: 13px; }
     footer a { color: #a3cfff; text-decoration: none; margin: 0 10px; font-weight: 500; cursor: pointer; }
     footer a:hover { text-decoration: underline; }
@@ -179,7 +180,7 @@
       const expired = isJobExpired(job["Last Date"]);
       const showNewTag = isNewPost(job["Date"]);
       
-      const jobID = job["ID"] || actualIndex;
+      const jobID = (job["ID"] && job["ID"].toString().trim() !== "") ? job["ID"] : `job-${actualIndex + 1}`;
       window.history.pushState(null, '', `?job=${jobID}`);
 
       const container = document.getElementById("main-container");
@@ -234,6 +235,52 @@
       }
     }
 
+    function openPage(pageType) {
+      const modal = document.getElementById("page-modal");
+      const modalContent = document.getElementById("modal-body-content");
+      
+      if(pageType === 'about') {
+        modalContent.innerHTML = `
+          <h2>About Us</h2>
+          <p>Welcome to <strong>Assam Job Alert</strong>, your primary destination for real-time notifications on official recruitment notices across Assam.</p>
+          <p>Our mission is to simplify job hunting for aspirants across Assam by providing clear, organized, and timely recruitment details for both Government and Private sector openings.</p>
+          <p>We aggregate job data from official departmental notifications to help you stay updated on upcoming recruitment dates, eligibility requirements, and application procedures.</p>
+        `;
+      } else if(pageType === 'contact') {
+        modalContent.innerHTML = `
+          <h2>Contact Us</h2>
+          <p>Feel free to reach out to us for job postings, queries, or user support.</p>
+          
+          <div class="contact-box">
+            <strong>📢 Job Posting / Business Inquiry:</strong>
+            <p style="margin-bottom:4px;">Want to publish a job vacancy on our portal? Contact us at:</p>
+            <a href="mailto:contactassamjobalert@gmail.com">contactassamjobalert@gmail.com</a>
+          </div>
+
+          <div class="contact-box">
+            <strong>❓ Help & General Support:</strong>
+            <p style="margin-bottom:4px;">For any portal-related queries or feedback, email us at:</p>
+            <a href="mailto:supportassamjobalert@gmail.com">supportassamjobalert@gmail.com</a>
+          </div>
+
+          <p style="margin-top:10px;"><strong>Location:</strong> Guwahati, Assam, India</p>
+        `;
+      } else if(pageType === 'privacy') {
+        modalContent.innerHTML = `
+          <h2>Privacy Policy</h2>
+          <p>At <strong>Assam Job Alert</strong>, accessible from our site, the privacy of our visitors is one of our top priorities.</p>
+          <p><strong>Log Files:</strong> Assam Job Alert follows a standard procedure of using log files. These files log visitors when they visit websites. The information collected includes IP addresses, browser types, ISP, date and time stamps, and referring pages.</p>
+          <p><strong>Google DoubleClick DART Cookie:</strong> Google is one of a third-party vendor on our site. It also uses cookies, known as DART cookies, to serve ads to our site visitors based upon their visit to our site and other sites on the internet.</p>
+          <p><strong>Third Party Advertisers:</strong> We may use third-party advertising companies (such as Google AdSense) to serve ads when you visit our website. These companies may use aggregated information about your visits to provide advertisements about goods and services of interest to you.</p>
+        `;
+      }
+      modal.style.display = "flex";
+    }
+
+    function closeModal() {
+      document.getElementById("page-modal").style.display = "none";
+    }
+
     function checkURLForJobParam() {
       const urlParams = new URLSearchParams(window.location.search);
       const jobParam = urlParams.get('job');
@@ -242,7 +289,8 @@
         const reversedJobs = allJobsData.slice().reverse();
         const foundIndex = reversedJobs.findIndex((job, i) => {
           const actualIndex = allJobsData.length - 1 - i;
-          return job["ID"] == jobParam || actualIndex == jobParam;
+          const currentID = (job["ID"] && job["ID"].toString().trim() !== "") ? job["ID"] : `job-${actualIndex + 1}`;
+          return currentID == jobParam || actualIndex == jobParam;
         });
         
         if (foundIndex !== -1) {
