@@ -12,19 +12,19 @@
     header h1 { font-size: 26px; font-weight: 700; margin-bottom: 6px; }
     header p { font-size: 14px; opacity: 0.8; }
     .container { max-width: 800px; margin: 25px auto; padding: 0 15px; }
-    .job-card { background: white; border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(112, 144, 176, 0.1); border: 1px solid #e9edf7; transition: transform 0.2s ease; position: relative; }
-    .job-card:hover { transform: translateY(-3px); }
-    .job-title { font-size: 18px; font-weight: 700; color: #1b2559; margin-bottom: 10px; padding-right: 50px; }
     
-    /* Badges Style */
+    /* Relative positioning to place NEW tag at top-right */
+    .job-card { background: white; border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(112, 144, 176, 0.1); border: 1px solid #e9edf7; transition: transform 0.2s ease; position: relative; overflow: hidden; }
+    .job-card:hover { transform: translateY(-3px); }
+    .job-title { font-size: 18px; font-weight: 700; color: #1b2559; margin-bottom: 10px; padding-right: 60px; }
+    
+    /* Top Right Floating NEW Badge */
+    .corner-new-tag { position: absolute; top: 15px; right: 15px; background: #ff4757; color: white; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 800; letter-spacing: 0.5px; box-shadow: 0 2px 8px rgba(255, 71, 87, 0.4); animation: pulse 1.5s infinite; }
+    
     .badge-container { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; align-items: center; }
     .badge { background: #e9f3ff; color: #0066ff; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
     .badge.last-date { background: #fff4e5; color: #b76e00; }
     
-    /* NEW Tag Style */
-    .badge.new-tag { background: #e6fffa; color: #047857; border: 1px solid #a7f3d0; font-weight: 700; animation: pulse 1.5s infinite; }
-    
-    /* Status Badges */
     .status-badge { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; text-transform: uppercase; }
     .status-active { background: #def7ec; color: #03543f; }
     .status-expired { background: #fde8e8; color: #9b1c1c; }
@@ -37,9 +37,9 @@
     .loading { text-align: center; font-weight: 600; color: #8f9bba; padding: 40px; }
 
     @keyframes pulse {
-      0% { opacity: 1; }
-      50% { opacity: 0.6; }
-      100% { opacity: 1; }
+      0% { transform: scale(1); }
+      50% { transform: scale(1.08); }
+      100% { transform: scale(1); }
     }
   </style>
 </head>
@@ -56,7 +56,6 @@
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbyZnkUKP0lJ5cCN4B968GmvHHigAfMjuxJwGQH1WPqFgCBpYZpfLwWVyiiMuAY0DdoC-g/exec";
 
-    // Date Formatting Function
     function formatDate(dateString) {
       if (!dateString) return "N/A";
       const date = new Date(dateString);
@@ -69,7 +68,7 @@
       return `${day}/${month}/${year}`;
     }
 
-    // Check if Job Post Date is within 24 Hours
+    // Check if uploaded within 24 Hours
     function isNewPost(postDateString) {
       if (!postDateString) return false;
       const postDate = new Date(postDateString);
@@ -78,11 +77,10 @@
       return diffHours >= 0 && diffHours <= 24;
     }
 
-    // Check if Job is Expired based on Last Date
     function isJobExpired(lastDateString) {
       if (!lastDateString) return false;
       const lastDate = new Date(lastDateString);
-      lastDate.setHours(23, 59, 59, 999); // Allow full day
+      lastDate.setHours(23, 59, 59, 999);
       const now = new Date();
       return now > lastDate;
     }
@@ -104,9 +102,9 @@
           const expired = isJobExpired(job["Last Date"]);
 
           card.innerHTML = `
+            ${showNewTag ? '<div class="corner-new-tag">NEW</div>' : ''}
             <div class="job-title">${job["Job Title"]}</div>
             <div class="badge-container">
-              ${showNewTag ? '<span class="badge new-tag">🔥 NEW</span>' : ''}
               <span class="badge">Posted: ${formatDate(job["Date"])}</span>
               <span class="badge last-date">Last Date: ${formatDate(job["Last Date"])}</span>
               <span class="status-badge ${expired ? 'status-expired' : 'status-active'}">
