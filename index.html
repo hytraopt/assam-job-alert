@@ -12,17 +12,35 @@
     header h1 { font-size: 26px; font-weight: 700; margin-bottom: 6px; }
     header p { font-size: 14px; opacity: 0.8; }
     .container { max-width: 800px; margin: 25px auto; padding: 0 15px; }
-    .job-card { background: white; border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(112, 144, 176, 0.1); border: 1px solid #e9edf7; transition: transform 0.2s ease; }
+    .job-card { background: white; border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(112, 144, 176, 0.1); border: 1px solid #e9edf7; transition: transform 0.2s ease; position: relative; }
     .job-card:hover { transform: translateY(-3px); }
-    .job-title { font-size: 18px; font-weight: 700; color: #1b2559; margin-bottom: 10px; }
-    .badge-container { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
+    .job-title { font-size: 18px; font-weight: 700; color: #1b2559; margin-bottom: 10px; padding-right: 50px; }
+    
+    /* Badges Style */
+    .badge-container { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; align-items: center; }
     .badge { background: #e9f3ff; color: #0066ff; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
-    .badge.last-date { background: #ffeef0; color: #ee5d50; }
+    .badge.last-date { background: #fff4e5; color: #b76e00; }
+    
+    /* NEW Tag Style */
+    .badge.new-tag { background: #e6fffa; color: #047857; border: 1px solid #a7f3d0; font-weight: 700; animation: pulse 1.5s infinite; }
+    
+    /* Status Badges */
+    .status-badge { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; text-transform: uppercase; }
+    .status-active { background: #def7ec; color: #03543f; }
+    .status-expired { background: #fde8e8; color: #9b1c1c; }
+
     .section-title { font-size: 13px; font-weight: 600; text-transform: uppercase; color: #8f9bba; margin-top: 10px; }
     .section-desc { font-size: 14px; color: #475467; margin-top: 4px; line-height: 1.5; white-space: pre-line; }
     .apply-btn { display: block; width: 100%; text-align: center; background: #0066ff; color: white; text-decoration: none; padding: 12px; border-radius: 8px; font-weight: 600; margin-top: 15px; transition: background 0.2s; }
+    .apply-btn.disabled { background: #9ca3af; pointer-events: none; }
     .apply-btn:hover { background: #0052cc; }
     .loading { text-align: center; font-weight: 600; color: #8f9bba; padding: 40px; }
+
+    @keyframes pulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.6; }
+      100% { opacity: 1; }
+    }
   </style>
 </head>
 <body>
@@ -38,7 +56,7 @@
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbyZnkUKP0lJ5cCN4B968GmvHHigAfMjuxJwGQH1WPqFgCBpYZpfLwWVyiiMuAY0DdoC-g/exec";
 
-    // Date Format Fix Function (DD/MM/YYYY)
+    // Date Formatting Function
     function formatDate(dateString) {
       if (!dateString) return "N/A";
       const date = new Date(dateString);
@@ -49,6 +67,24 @@
       const year = date.getFullYear();
       
       return `${day}/${month}/${year}`;
+    }
+
+    // Check if Job Post Date is within 24 Hours
+    function isNewPost(postDateString) {
+      if (!postDateString) return false;
+      const postDate = new Date(postDateString);
+      const now = new Date();
+      const diffHours = (now - postDate) / (1000 * 60 * 60);
+      return diffHours >= 0 && diffHours <= 24;
+    }
+
+    // Check if Job is Expired based on Last Date
+    function isJobExpired(lastDateString) {
+      if (!lastDateString) return false;
+      const lastDate = new Date(lastDateString);
+      lastDate.setHours(23, 59, 59, 999); // Allow full day
+      const now = new Date();
+      return now > lastDate;
     }
 
     fetch(API_URL)
@@ -63,17 +99,28 @@
         data.reverse().forEach(job => {
           const card = document.createElement("div");
           card.className = "job-card";
+
+          const showNewTag = isNewPost(job["Date"]);
+          const expired = isJobExpired(job["Last Date"]);
+
           card.innerHTML = `
             <div class="job-title">${job["Job Title"]}</div>
             <div class="badge-container">
+              ${showNewTag ? '<span class="badge new-tag">🔥 NEW</span>' : ''}
               <span class="badge">Posted: ${formatDate(job["Date"])}</span>
               <span class="badge last-date">Last Date: ${formatDate(job["Last Date"])}</span>
+              <span class="status-badge ${expired ? 'status-expired' : 'status-active'}">
+                ${expired ? 'Expired' : 'Active'}
+              </span>
             </div>
             <div class="section-title">About Job</div>
             <div class="section-desc">${job["About Job"]}</div>
             <div class="section-title">Requirements</div>
             <div class="section-desc">${job["Requirements"]}</div>
-            <a href="${job["Apply Link"]}" target="_blank" class="apply-btn">Apply Online</a>
+            ${expired 
+              ? '<a href="#" class="apply-btn disabled">Applications Closed</a>' 
+              : `<a href="${job["Apply Link"]}" target="_blank" class="apply-btn">Apply Online</a>`
+            }
           `;
           container.appendChild(card);
         });
