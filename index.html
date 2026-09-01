@@ -18,7 +18,7 @@
     .badge-container { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
     .badge { background: #e9f3ff; color: #0066ff; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
     .badge.last-date { background: #ffeef0; color: #ee5d50; }
-    .section-title { font-size: 13px; font-weight: 600; text-transform: uppercase; color: #a3edd9; color: #8f9bba; margin-top: 10px; }
+    .section-title { font-size: 13px; font-weight: 600; text-transform: uppercase; color: #8f9bba; margin-top: 10px; }
     .section-desc { font-size: 14px; color: #475467; margin-top: 4px; line-height: 1.5; white-space: pre-line; }
     .apply-btn { display: block; width: 100%; text-align: center; background: #0066ff; color: white; text-decoration: none; padding: 12px; border-radius: 8px; font-weight: 600; margin-top: 15px; transition: background 0.2s; }
     .apply-btn:hover { background: #0052cc; }
@@ -36,7 +36,20 @@
   </div>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbyZnkUKP0lJ5cCN4B968GmvHHigAfMjuxJwGQH1WPqFgCBpYZpfLwWVyiiMuAY0DdoC-g/exec"; // Web App URL Replace Karein
+    const API_URL = "https://script.google.com/macros/s/AKfycbyZnkUKP0lJ5cCN4B968GmvHHigAfMjuxJwGQH1WPqFgCBpYZpfLwWVyiiMuAY0DdoC-g/exec";
+
+    // Date Format Fix Function (DD/MM/YYYY)
+    function formatDate(dateString) {
+      if (!dateString) return "N/A";
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return dateString;
+      
+      const day = String(date.getDate()).padStart(2, '0');
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const year = date.getFullYear();
+      
+      return `${day}/${month}/${year}`;
+    }
 
     fetch(API_URL)
       .then(res => res.json())
@@ -53,8 +66,8 @@
           card.innerHTML = `
             <div class="job-title">${job["Job Title"]}</div>
             <div class="badge-container">
-              <span class="badge">Posted: ${job["Date"]}</span>
-              <span class="badge last-date">Last Date: ${job["Last Date"]}</span>
+              <span class="badge">Posted: ${formatDate(job["Date"])}</span>
+              <span class="badge last-date">Last Date: ${formatDate(job["Last Date"])}</span>
             </div>
             <div class="section-title">About Job</div>
             <div class="section-desc">${job["About Job"]}</div>
