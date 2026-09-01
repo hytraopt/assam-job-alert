@@ -47,9 +47,11 @@
     .close-modal { position: absolute; top: 15px; right: 15px; font-size: 22px; font-weight: bold; color: #64748b; cursor: pointer; border: none; background: none; }
     .modal-body h2 { color: #1b2559; margin-bottom: 12px; font-size: 20px; }
     .modal-body p { font-size: 14px; color: #475467; line-height: 1.6; margin-bottom: 12px; }
-    .contact-box { background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px 15px; border-radius: 8px; margin-bottom: 12px; }
+    
+    /* Responsive Contact Boxes */
+    .contact-box { background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px 15px; border-radius: 8px; margin-bottom: 12px; word-break: break-word; overflow-wrap: anywhere; }
     .contact-box strong { color: #1b2559; display: block; margin-bottom: 4px; }
-    .contact-box a { color: #0066ff; font-weight: 600; text-decoration: none; }
+    .contact-box a { color: #0066ff; font-weight: 600; text-decoration: none; word-break: break-all; }
 
     @keyframes pulse {
       0% { transform: scale(1); }
@@ -199,13 +201,13 @@
           
           <div class="contact-box">
             <strong>📢 Job Posting / Business Inquiry:</strong>
-            <p style="margin-bottom:0;">Want to publish a job vacancy on our portal? Contact us at:</p>
+            <p style="margin-bottom:4px;">Want to publish a job vacancy on our portal? Contact us at:</p>
             <a href="mailto:contactassamjobaleart@gmail.com">contactassamjobaleart@gmail.com</a>
           </div>
 
           <div class="contact-box">
             <strong>❓ Help & General Support:</strong>
-            <p style="margin-bottom:0;">For any portal-related queries or feedback, email us at:</p>
+            <p style="margin-bottom:4px;">For any portal-related queries or feedback, email us at:</p>
             <a href="mailto:supportassamjobaleart@gmail.com">supportassamjobaleart@gmail.com</a>
           </div>
 
